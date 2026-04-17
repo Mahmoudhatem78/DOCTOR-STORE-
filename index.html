@@ -1,406 +1,270 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DOCTOR STORE | Official</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@700&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOCTOR STORE</title>
 
-        :root {
-            --bg-black: #050505;
-            --pure-white: #ffffff;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --border-color: rgba(255, 255, 255, 0.2);
-        }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg-black);
-            font-family: 'Cairo', sans-serif;
-            color: var(--pure-white);
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
+:root{
+    --main:#fff;
+    --bg:#000;
+}
 
-        /* --- خلفية الفيديو --- */
-        .video-bg-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
-            overflow: hidden; background: #000;
-        }
-        .video-bg-container video {
-            width: 100vw; height: 100vh; object-fit: cover; opacity: 0.4; /* تقليل الشفافية ليوضح الكلام */
-            filter: grayscale(100%); /* جعله أبيض وأسود ليتماشى مع الثيم */
-        }
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.4));
-        }
+body{
+    margin:0;
+    font-family:'Cairo',sans-serif;
+    background:var(--bg);
+    color:var(--main);
+    overflow-x:hidden;
+}
 
-        /* --- الهيدر واللوجو --- */
-        header {
-            position: fixed; top: 0; left: 0; width: 100%; padding: 20px 5%; box-sizing: border-box;
-            display: flex; justify-content: space-between; align-items: center;
-            z-index: 1000; transition: all 0.5s ease;
-        }
-        header.scrolled {
-            padding: 10px 5%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--border-color);
-        }
-        .logo-container {
-            display: flex; align-items: center; gap: 15px; cursor: pointer;
-        }
-        .logo-img {
-            width: 120px; transition: all 0.5s ease;
-            /* حركة الـ 3D المستمرة */
-            animation: spin3D 8s linear infinite;
-            transform-style: preserve-3d;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
-        }
-        header.scrolled .logo-img { width: 60px; } /* تصغير اللوجو عند النزول */
-        
-        .brand-name {
-            font-family: 'Orbitron', sans-serif; font-size: 1.8rem; font-weight: 900;
-            letter-spacing: 5px; text-shadow: 0 0 15px white; transition: 0.5s;
-        }
-        header.scrolled .brand-name { font-size: 1.2rem; }
+/* فيديو الخلفية */
+video.bg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:-2;
+    opacity:0.2;
+}
 
-        @keyframes spin3D {
-            0% { transform: perspective(1000px) rotateY(0deg); }
-            100% { transform: perspective(1000px) rotateY(360deg); }
-        }
+/* طبقة سوداء */
+.overlay{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:#000;
+    opacity:0.7;
+    z-index:-1;
+}
 
-        /* أيقونة السلة */
-        .cart-icon {
-            position: relative; cursor: pointer; font-size: 1.5rem; transition: 0.3s;
-        }
-        .cart-icon:hover { text-shadow: 0 0 15px white; transform: scale(1.1); }
-        .cart-count {
-            position: absolute; top: -10px; right: -15px; background: white; color: black;
-            border-radius: 50%; padding: 2px 8px; font-size: 0.8rem; font-weight: bold;
-        }
+/* الهيدر */
+.header{
+    position:fixed;
+    top:0;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 20px;
+    background:rgba(0,0,0,0.7);
+    backdrop-filter:blur(10px);
+    z-index:1000;
+}
 
-        /* --- نظام الصفحات --- */
-        .page {
-            position: relative; z-index: 10; width: 100%; min-height: 100vh;
-            display: none; flex-direction: column; align-items: center;
-            padding: 120px 20px 40px; box-sizing: border-box;
-        }
-        .active { display: flex; animation: fadeIn 0.6s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+/* اللوجو */
+.logo{
+    width:60px;
+    animation:spin 6s linear infinite;
+}
 
-        /* نصوص ترحيبية */
-        .hero-text { text-align: center; margin-bottom: 50px; }
-        .hero-text h1 { font-size: 3rem; margin: 0; text-shadow: 0 0 20px rgba(255,255,255,0.6); }
-        .hero-text p { color: #aaa; font-size: 1.2rem; margin-top: 10px; }
+/* مكان تحط اللوجو */
+.logo img{
+    width:100%;
+}
 
-        /* --- شبكة المنتجات --- */
-        .products-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 40px; width: 100%; max-width: 1200px;
-        }
-        .product-card {
-            background: var(--glass-bg); border-radius: 20px; padding: 30px; text-align: center;
-            border: 1px solid var(--border-color); backdrop-filter: blur(10px);
-            cursor: pointer; transition: 0.4s; position: relative; overflow: hidden;
-        }
-        .product-card:hover {
-            border-color: white; transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(255, 255, 255, 0.1);
-        }
-        /* حركة طفو المنتجات الديناميكية */
-        .floating-img {
-            width: 100%; aspect-ratio: 1/1; object-fit: contain; transition: 0.4s;
-            animation: float 4s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-        .product-card:hover .floating-img { filter: drop-shadow(0 0 25px white) scale(1.1); animation-play-state: paused; }
-        
-        .product-title { font-size: 1.4rem; font-weight: bold; margin: 15px 0 5px; }
-        .product-price { color: #ccc; font-size: 1.2rem; font-family: 'Orbitron', sans-serif; }
+/* دوران 360 */
+@keyframes spin{
+    0%{transform:rotateY(0deg);}
+    100%{transform:rotateY(360deg);}
+}
 
-        /* --- صفحة تفاصيل المنتج --- */
-        .detail-container {
-            display: flex; flex-wrap: wrap; gap: 50px; max-width: 1100px; width: 100%;
-            justify-content: center; align-items: center; background: rgba(0,0,0,0.6);
-            padding: 40px; border-radius: 30px; border: 1px solid var(--border-color);
-            backdrop-filter: blur(20px);
-        }
-        /* المنتج المتوهج */
-        .detail-img {
-            flex: 1; min-width: 300px; max-width: 450px; object-fit: contain;
-            filter: drop-shadow(0 0 50px white); /* توهج قوي */
-            animation: float 6s ease-in-out infinite;
-        }
-        .detail-info { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px; }
-        .detail-info h2 { font-size: 2.5rem; margin: 0; }
-        .desc { color: #bbb; line-height: 1.8; }
-        .btn-add-cart {
-            background: white; color: black; border: none; padding: 15px 30px; font-size: 1.2rem;
-            font-weight: bold; cursor: pointer; border-radius: 10px; transition: 0.3s; width: 100%;
-        }
-        .btn-add-cart:hover { background: #ccc; box-shadow: 0 0 20px rgba(255,255,255,0.5); transform: scale(1.02); }
+/* اسم الموقع */
+.title{
+    font-size:20px;
+    font-weight:bold;
+}
 
-        /* --- السلة والدفع --- */
-        .cart-container, .checkout-container {
-            background: var(--glass-bg); padding: 40px; border-radius: 20px;
-            width: 100%; max-width: 800px; border: 1px solid var(--border-color);
-        }
-        .cart-item { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 15px 0; }
-        .cart-total { font-size: 1.5rem; font-weight: bold; text-align: left; margin-top: 20px; }
-        
-        .form-group { margin-bottom: 20px; text-align: right; }
-        .form-group label { display: block; margin-bottom: 8px; color: #ccc; }
-        .form-group input {
-            width: 100%; padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid #555;
-            color: white; border-radius: 8px; box-sizing: border-box; font-family: 'Cairo', sans-serif;
-        }
-        .form-group input:focus { outline: none; border-color: white; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
-        
-        .fawry-btn {
-            background: transparent; color: white; border: 2px solid white; padding: 15px; width: 100%;
-            font-size: 1.2rem; font-weight: bold; cursor: pointer; border-radius: 10px; transition: 0.3s;
-            margin-top: 20px;
-        }
-        .fawry-btn:hover { background: white; color: black; box-shadow: 0 0 20px white; }
+/* المنتجات */
+.products{
+    margin-top:100px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:20px;
+    padding:20px;
+}
 
-        .back-btn {
-            align-self: flex-start; cursor: pointer; font-size: 1.2rem; margin-bottom: 20px;
-            display: inline-flex; align-items: center; gap: 10px; opacity: 0.8; transition: 0.3s;
-        }
-        .back-btn:hover { opacity: 1; text-shadow: 0 0 10px white; }
-    </style>
+/* كارت المنتج */
+.card{
+    background:#111;
+    padding:15px;
+    border-radius:15px;
+    text-align:center;
+    transition:0.4s;
+    position:relative;
+    overflow:hidden;
+}
+
+.card:hover{
+    transform:translateY(-10px) scale(1.05);
+    box-shadow:0 0 20px white;
+}
+
+/* حركة ديناميكية */
+.card::before{
+    content:"";
+    position:absolute;
+    width:200%;
+    height:200%;
+    background:linear-gradient(45deg,transparent,white,transparent);
+    animation:move 3s linear infinite;
+    opacity:0.1;
+}
+
+@keyframes move{
+    0%{transform:translate(-50%,-50%) rotate(0deg);}
+    100%{transform:translate(-50%,-50%) rotate(360deg);}
+}
+
+.card img{
+    width:100%;
+    height:200px;
+    object-fit:contain;
+}
+
+.btn{
+    margin-top:10px;
+    padding:10px;
+    border:none;
+    background:white;
+    color:black;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+/* تفاصيل المنتج */
+.detail{
+    display:none;
+    padding:20px;
+}
+
+.detail img{
+    width:300px;
+    display:block;
+    margin:auto;
+    filter:drop-shadow(0 0 20px white);
+}
+
+/* الكارت */
+.cart{
+    position:fixed;
+    right:10px;
+    bottom:10px;
+    background:white;
+    color:black;
+    padding:10px;
+    border-radius:10px;
+    cursor:pointer;
+}
+</style>
 </head>
+
 <body>
 
-    <div class="video-bg-container">
-        <video autoplay loop muted playsinline>
-            <source src="Pin by Yare Mendez on insp _ Trippy visuals_ Dark nature aesthetic_ Film texture(MP4).mp4" type="video/mp4">
-        </video>
+<!-- مكان فيديو الخلفية -->
+<video class="bg" autoplay muted loop>
+    <source src="Pin by Yare Mendez on insp _ Trippy visuals_ Dark nature aesthetic_ Film texture(MP4).mp4">
+</video>
+
+<div class="overlay"></div>
+
+<div class="header">
+    <div class="logo">
+        <!-- حط هنا رابط اللوجو -->
+        <img src="Picsart_26-04-17_15-18-45-258.png">
     </div>
-    <div class="overlay"></div>
+    <div class="title">DOCTOR STORE</div>
+</div>
 
-    <header id="mainHeader">
-        <div class="logo-container" onclick="navigateTo('homePage')">
-            <img src="Picsart_26-04-17_15-18-45-258.png" alt="Doctor Store Logo" class="logo-img" onerror="this.src='https://placehold.co/200x200/000/fff?text=DS'">
-            <div class="brand-name">DOCTOR STORE</div>
-        </div>
-        <div class="cart-icon" onclick="navigateTo('cartPage')">
-            🛒 <span class="cart-count" id="cartCount">0</span>
-        </div>
-    </header>
+<!-- المنتجات -->
+<div class="products" id="products"></div>
 
-    <div id="homePage" class="page active">
-        <div class="hero-text">
-            <h1>مرحباً بك في DOCTOR STORE</h1>
-            <p>المصدر الأول للكتب الخارجية التعليمية بأعلى جودة واحترافية.</p>
-        </div>
-        <div class="products-grid" id="productsGrid">
-            </div>
+<!-- تفاصيل -->
+<div class="detail" id="detail"></div>
+
+<!-- سلة -->
+<div class="cart" onclick="openCart()">🛒 Cart</div>
+
+<script>
+
+const products=[
+{ id:1,name:"Biology Book",price:150,img:"https://placehold.co/300x300" },
+{ id:2,name:"Chemistry Book",price:200,img:"https://placehold.co/300x300" },
+{ id:3,name:"Physics Book",price:180,img:"https://placehold.co/300x300" },
+{ id:4,name:"Math Book",price:170,img:"https://placehold.co/300x300" },
+{ id:5,name:"English Book",price:140,img:"https://placehold.co/300x300" },
+{ id:6,name:"History Book",price:160,img:"https://placehold.co/300x300" }
+];
+
+let cart=[];
+
+const container=document.getElementById("products");
+
+products.forEach(p=>{
+    container.innerHTML+=`
+    <div class="card" onclick="openProduct(${p.id})">
+        <img src="${p.img}">
+        <h3>${p.name}</h3>
+        <p>${p.price} EGP</p>
+        <button class="btn">عرض</button>
     </div>
+    `;
+});
 
-    <div id="productDetailPage" class="page">
-        <div class="back-btn" onclick="history.back()">➜ رجوع</div>
-        <div class="detail-container" id="productDetailContent">
-            </div>
-    </div>
+function openProduct(id){
+    const p=products.find(x=>x.id==id);
+    document.getElementById("products").style.display="none";
 
-    <div id="cartPage" class="page">
-        <div class="back-btn" onclick="history.back()">➜ رجوع للتسوق</div>
-        <div class="cart-container">
-            <h2 style="text-align: right; border-bottom: 1px solid #555; padding-bottom: 10px;">سلة المشتريات</h2>
-            <div id="cartItemsList"></div>
-            <div class="cart-total" id="cartTotalDisplay">الإجمالي: 0 ج.م</div>
-            <button class="fawry-btn" style="background: white; color: black;" onclick="if(cart.length > 0) navigateTo('checkoutPage')">المتابعة للدفع</button>
-        </div>
-    </div>
+    document.getElementById("detail").style.display="block";
+    document.getElementById("detail").innerHTML=`
+        <button onclick="goBack()">رجوع</button>
+        <img src="${p.img}">
+        <h2>${p.name}</h2>
+        <p>${p.price} جنيه</p>
+        <button class="btn" onclick="addToCart('${p.name}')">اضف للسلة</button>
+        <button class="btn" onclick="orderNow('${p.name}',${p.price})">اطلب الآن</button>
+    `;
+}
 
-    <div id="checkoutPage" class="page">
-        <div class="back-btn" onclick="history.back()">➜ رجوع للسلة</div>
-        <div class="checkout-container">
-            <h2 style="text-align: right; margin-bottom: 30px;">تأكيد الطلب والدفع عبر فوري</h2>
-            <div class="form-group">
-                <label>الاسم بالكامل</label>
-                <input type="text" id="customerName" placeholder="أدخل اسمك الثلاثي">
-            </div>
-            <div class="form-group">
-                <label>رقم الهاتف (للتواصل)</label>
-                <input type="tel" id="customerPhone" placeholder="مثال: 01000000000">
-            </div>
-            <div class="form-group">
-                <label>العنوان بالتفصيل (المحافظة، المركز، الشارع)</label>
-                <input type="text" id="customerAddress" placeholder="أدخل عنوان التوصيل بالتفصيل">
-            </div>
-            
-            <button class="fawry-btn" onclick="processFawryCheckout()">تأكيد الطلب (الحصول على كود فوري)</button>
-            <p style="font-size: 0.9rem; color: #aaa; text-align: center; margin-top: 15px;">سيتم توجيهك للحصول على كود الدفع وإرسال تفاصيلك.</p>
-        </div>
-    </div>
+function goBack(){
+    document.getElementById("products").style.display="grid";
+    document.getElementById("detail").style.display="none";
+}
 
-    <script>
-        // --- 1. إعدادات الموقع والبيانات ---
-        const whatsappNumber = "201023708424"; // ضع رقم الواتساب الخاص بك هنا مفتاح الدولة 20 لمصر
+function addToCart(name){
+    cart.push(name);
+    alert("تم الاضافة للسلة");
+}
 
-        // قائمة الكتب (6 منتجات)
-        const products = [
-            { id: 1, name: "كتاب الفيزياء المتقدمة - 3 ثانوي", price: 250, img: "https://placehold.co/400x400/111/fff?text=Physics", desc: "أقوى كتاب خارجي في الفيزياء يشمل شرح مبسط وأسئلة النظام الحديث مطابقة لمواصفات الوزارة." },
-            { id: 2, name: "كتاب الكيمياء العضوية - 3 ثانوي", price: 220, img: "https://placehold.co/400x400/111/fff?text=Chemistry", desc: "تغطية شاملة للكيمياء العضوية مع خرائط ذهنية وتدريبات مكثفة." },
-            { id: 3, name: "بنك أسئلة الأحياء - 3 ثانوي", price: 190, img: "https://placehold.co/400x400/111/fff?text=Biology", desc: "أكثر من 5000 سؤال مجاب عنها بالتفسير الدقيق في مادة الأحياء." },
-            { id: 4, name: "كتاب الرياضيات البحتة", price: 280, img: "https://placehold.co/400x400/111/fff?text=Math", desc: "شرح وافٍ وتدريبات متدرجة الصعوبة للوصول للدرجة النهائية." },
-            { id: 5, name: "كتاب اللغة العربية - النحو والبلاغة", price: 200, img: "https://placehold.co/400x400/111/fff?text=Arabic", desc: "تبسيط قواعد النحو والبلاغة مع تطبيقات متحررة حديثة." },
-            { id: 6, name: "كتاب اللغة الإنجليزية (المهارات)", price: 210, img: "https://placehold.co/400x400/111/fff?text=English", desc: "كتاب متخصص في القطع المتحررة، الترجمة، وكتابة المقال (Essay)." }
-        ];
+function openCart(){
+    alert(cart.join("\n"));
+}
 
-        let cart = [];
+/* طلب (فوري + واتساب) */
+function orderNow(name,price){
+    let userName=prompt("اكتب اسمك");
+    let phone=prompt("رقمك");
+    let location=prompt("موقعك");
 
-        // --- 2. نظام التنقل والرجوع بالهاتف ---
-        window.addEventListener('load', () => {
-            history.replaceState({page: 'homePage'}, "", "#homePage");
-            renderProducts();
-        });
+    let msg=`طلب جديد:
+الاسم: ${userName}
+رقم: ${phone}
+الموقع: ${location}
+المنتج: ${name}
+السعر: ${price}`;
 
-        window.onpopstate = function(event) {
-            if (event.state && event.state.page) {
-                renderPage(event.state.page);
-            } else {
-                renderPage('homePage');
-            }
-        };
+    window.open(`https://wa.me/201023708424?text=${encodeURIComponent(msg)}`);
+}
 
-        function navigateTo(pageId) {
-            history.pushState({page: pageId}, "", "#" + pageId);
-            renderPage(pageId);
-        }
+/* زر الرجوع */
+window.onpopstate=()=>{
+    goBack();
+}
 
-        function renderPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            window.scrollTo(0,0);
-            if(pageId === 'cartPage') renderCart();
-        }
+</script>
 
-        // --- 3. تأثيرات السكرول للهيدر ---
-        window.addEventListener('scroll', () => {
-            const header = document.getElementById('mainHeader');
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
-
-        // --- 4. عرض المنتجات ---
-        function renderProducts() {
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = '';
-            products.forEach(p => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.onclick = () => openProduct(p);
-                card.innerHTML = `
-                    <img src="${p.img}" class="floating-img">
-                    <div class="product-title">${p.name}</div>
-                    <div class="product-price">${p.price} EGP</div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function openProduct(product) {
-            const detailBox = document.getElementById('productDetailContent');
-            detailBox.innerHTML = `
-                <div class="detail-info">
-                    <h2>${product.name}</h2>
-                    <div class="product-price" style="font-size:2rem;">${product.price} EGP</div>
-                    <p class="desc">${product.desc}</p>
-                    <button class="btn-add-cart" onclick="addToCart(${product.id})">إضافة للسلة 🛒</button>
-                </div>
-                <img src="${product.img}" class="detail-img">
-            `;
-            navigateTo('productDetailPage');
-        }
-
-        // --- 5. نظام السلة ---
-        function addToCart(id) {
-            const product = products.find(p => p.id === id);
-            cart.push(product);
-            document.getElementById('cartCount').innerText = cart.length;
-            alert('تمت الإضافة إلى السلة!');
-        }
-
-        function renderCart() {
-            const list = document.getElementById('cartItemsList');
-            let total = 0;
-            list.innerHTML = '';
-            
-            if(cart.length === 0) {
-                list.innerHTML = '<p style="text-align:center; color:#aaa;">السلة فارغة حالياً.</p>';
-            } else {
-                cart.forEach((item, index) => {
-                    total += item.price;
-                    list.innerHTML += `
-                        <div class="cart-item">
-                            <span style="color:#ff4444; cursor:pointer;" onclick="removeFromCart(${index})">❌ حذف</span>
-                            <span>${item.name}</span>
-                            <span>${item.price} ج.م</span>
-                        </div>
-                    `;
-                });
-            }
-            document.getElementById('cartTotalDisplay').innerText = `الإجمالي: ${total} ج.م`;
-        }
-
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            document.getElementById('cartCount').innerText = cart.length;
-            renderCart();
-        }
-
-        // --- 6. نظام تأكيد الطلب وفوري ---
-        function processFawryCheckout() {
-            const name = document.getElementById('customerName').value;
-            const phone = document.getElementById('customerPhone').value;
-            const address = document.getElementById('customerAddress').value;
-
-            if(!name || !phone || !address) {
-                alert("يرجى إدخال جميع البيانات لإتمام الطلب.");
-                return;
-            }
-
-            let total = cart.reduce((sum, item) => sum + item.price, 0);
-            
-            // توليد كود فوري وهمي مكون من 9 أرقام لتكتمل التجربة الاحترافية للعميل
-            let fawryCode = Math.floor(100000000 + Math.random() * 900000000);
-
-            // تجميع محتوى الطلب
-            let itemsText = cart.map(item => `- ${item.name}`).join('%0A');
-
-            // تجهيز الرسالة التي ستصلك على الواتساب
-            const msg = `طلب جديد من DOCTOR STORE ⚡%0A%0A` +
-                        `👤 الاسم: ${name}%0A` +
-                        `📞 الرقم: ${phone}%0A` +
-                        `📍 العنوان: ${address}%0A%0A` +
-                        `📚 الكتب المطلوبة:%0A${itemsText}%0A%0A` +
-                        `💰 الإجمالي: ${total} ج.م%0A` +
-                        `🔢 كود الدفع فوري الصادر للعميل: ${fawryCode}%0A%0A` +
-                        `الرجاء تأكيد استلام المبلغ عبر فوري لشحن الطلب.`;
-
-            // تنبيه العميل قبل التحويل
-            alert(`تم إنشاء طلبك بنجاح! كود فوري الخاص بك هو: ${fawryCode} \nسيتم تحويلك الآن لتأكيد الطلب معنا.`);
-            
-            // تفريغ السلة بعد الطلب
-            cart = [];
-            document.getElementById('cartCount').innerText = 0;
-
-            // فتح الواتساب
-            window.open(`https://wa.me/${whatsappNumber}?text=${msg}`, '_blank');
-            
-            // العودة للرئيسية
-            navigateTo('homePage');
-        }
-    </script>
 </body>
 </html>
