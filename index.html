@@ -1,252 +1,202 @@
 <!DOCTYPE html>
-<html lang="ar" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Websy Store Clone</title>
+    <title>DOCTOR STORE | للكتب الخارجية</title>
     <style>
-        /* * إعدادات التصميم الأساسية (CSS)
-         */
-        body, html { 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'Courier New', Courier, monospace; /* خط مقارب للذي في الفيديو */
-            background-color: #000; 
-            color: #fff; 
-            overflow-x: hidden; 
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+
+        :root {
+            --primary: #ffffff;
+            --bg-black: #000000;
+            --accent: #f0f0f0;
         }
 
-        /* إعدادات فيديو الخلفية */
-        .video-bg { 
-            position: fixed; 
-            right: 0; 
-            bottom: 0; 
-            min-width: 100%; 
-            min-height: 100%; 
-            z-index: -1; /* لضمان بقاء الفيديو في الخلفية دائماً */
-            object-fit: cover; 
-            opacity: 0.6; /* نسبة الشفافية لكي تظهر المنتجات بوضوح */
+        body, html {
+            margin: 0; padding: 0; width: 100%; font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-black); color: var(--primary);
+            overflow-x: hidden; scroll-behavior: smooth;
         }
 
-        /* تصميم الشاشة الافتتاحية (الواجهة) */
-        #splash { 
-            height: 100vh; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            cursor: pointer; 
-            position: relative; 
-            z-index: 10; 
-            background: #000; 
-        }
-        #splash img { 
-            max-width: 90%; 
-            max-height: 90vh; 
-            object-fit: contain;
+        /* فيديو الخلفية */
+        .video-background {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; object-fit: cover; opacity: 0.4; /* تقليل الشفافية لراحة العين */
         }
 
-        /* الحاوية الرئيسية للمتجر */
-        #main-app { 
-            display: none; /* مخفي في البداية حتى يتم النقر على الواجهة */
-            padding: 20px 5%; 
-            z-index: 1; 
-            position: relative; 
+        /* اللوجو العائم عند السكرول */
+        #sticky-logo {
+            position: fixed; top: 20px; right: 20px; width: 60px; height: 60px;
+            z-index: 1000; display: none; /* يظهر بالـ JS */
+            animation: rotate 5s linear infinite;
         }
 
-        /* القائمة العلوية (Header) */
-        header { 
-            display: flex; 
-            justify-content: flex-start; 
-            padding: 20px 0; 
-            border-bottom: 1px solid rgba(255,255,255,0.2); 
-            margin-bottom: 30px;
+        /* الحاوية الرئيسية */
+        .page {
+            position: relative; z-index: 10; width: 100%; min-height: 100vh;
+            display: none; flex-direction: column; align-items: center; padding: 20px;
+            box-sizing: border-box;
         }
-        header nav a { 
-            color: #fff; 
-            text-decoration: none; 
-            margin-right: 30px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            text-transform: uppercase;
-            font-size: 0.9em;
-            letter-spacing: 1px;
-        }
-        header nav a:hover { color: #aaa; }
+        .active { display: flex; animation: fadeIn 0.8s ease; }
 
-        /* العناوين */
-        h1 { text-align: center; font-size: 2.5em; text-transform: uppercase; margin-bottom: 5px; }
-        .subtitle { text-align: center; font-size: 1.2em; color: #ccc; margin-bottom: 40px; text-transform: uppercase;}
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* شبكة المنتجات (Catalog) */
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-            gap: 30px; 
-            padding: 20px 0; 
+        /* الشعار الرئيسي */
+        .main-logo-container {
+            text-align: center; margin-top: 50px;
         }
-        .card { 
-            background: transparent; 
-            text-align: center; 
-            cursor: pointer; 
-            transition: transform 0.3s ease; 
-        }
-        .card:hover { transform: scale(1.03); } /* تأثير تكبير بسيط عند التمرير بالماوس */
-        .card img { 
-            width: 100%; 
-            height: auto; 
-            border-radius: 5px; 
-            background-color: #111; /* لون خلفية بديل للصورة */
-        }
-        .card h3 { margin: 15px 0 5px 0; font-size: 1.1em; }
-        .price { color: #fff; font-weight: bold; margin: 0; font-size: 0.9em;}
-
-        /* صفحة تفاصيل المنتج الواحد */
-        #product-page { display: none; padding: 40px 0; }
-        .product-container { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 50px; 
-            justify-content: center; 
-        }
-        .product-image { flex: 1; min-width: 300px; max-width: 450px; }
-        .product-image img { width: 100%; border-radius: 10px; background-color: #111; }
-        
-        .product-details { flex: 1; min-width: 300px; display: flex; flex-direction: column; justify-content: flex-start; }
-        .product-details h1 { text-align: left; margin-top: 0; font-size: 2em; }
-        .product-details .price-large { color: #ccc; font-size: 1.2em; margin-bottom: 30px; }
-        
-        .quantity { margin: 20px 0 30px 0; display:flex; align-items: center; gap: 15px;}
-        .quantity label { text-transform: uppercase; font-size: 0.9em; }
-        .quantity input { 
-            width: 60px; 
-            padding: 12px; 
-            text-align: center; 
-            background: transparent; 
-            color: #fff; 
-            border: 1px solid #fff; 
-            font-size: 1em;
+        .main-logo {
+            width: 150px; height: 150px;
+            animation: rotate 8s linear infinite;
+            filter: drop-shadow(0 0 15px white);
         }
 
-        /* زر الإضافة للسلة */
-        .btn { 
-            background: #fff; 
-            color: #000; 
-            border: 1px solid #fff; 
-            padding: 15px; 
-            cursor: pointer; 
-            font-size: 1em; 
-            text-transform: uppercase; 
-            font-weight: bold;
-            transition: all 0.3s; 
-            width: 100%;
-            max-width: 300px;
+        .store-title {
+            font-size: 3rem; font-weight: 900; letter-spacing: 5px;
+            margin: 20px 0; border-bottom: 2px solid white;
         }
-        .btn:hover { background: #000; color: #fff; }
-        
-        .size-chart { 
-            background: transparent; 
-            border: none; 
-            color: #fff; 
-            text-decoration: underline; 
-            text-align: left; 
-            padding-left: 0; 
-            margin-top: 15px; 
-            cursor: pointer; 
+
+        /* شبكة المنتجات */
+        .products-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px; width: 100%; max-width: 1200px; padding: 40px 0;
         }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px; padding: 20px; text-align: center;
+            transition: 0.4s ease; backdrop-filter: blur(10px);
+            animation: pulse 4s infinite ease-in-out; /* حركة ديناميكية وهي ثابتة */
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(255,255,255,0.1); }
+            50% { transform: scale(1.02); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        }
+
+        .product-card:hover { background: white; color: black; }
+        .product-img { width: 100%; height: 250px; object-fit: contain; margin-bottom: 15px; }
+
+        /* نموذج الطلب */
+        .order-form {
+            display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px;
+            background: rgba(20, 20, 20, 0.9); padding: 30px; border-radius: 15px;
+            border: 1px solid white;
+        }
+        .order-form input, .order-form select {
+            padding: 12px; border: 1px solid white; background: transparent; color: white;
+        }
+        .btn-confirm {
+            background: white; color: black; border: none; padding: 15px;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .btn-confirm:hover { background: #ccc; }
+
+        .fawry-tag { color: #5cb85c; font-weight: bold; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-    <div id="splash" onclick="enterStore()">
-        <img src="https://via.placeholder.com/800x600/000000/FFFFFF?text=CLICK+TO+ENTER" alt="Enter Store">
+    <video autoplay muted loop class="video-background">
+        <source src="Pin by Yare Mendez on insp _ Trippy visuals_ Dark nature aesthetic_ Film texture(MP4).mp4" type="video/mp4">
+    </video>
+
+    <img src="Picsart_26-04-17_15-18-45-258.png" id="sticky-logo" alt="Logo">
+
+    <div id="homePage" class="page active">
+        <div class="main-logo-container">
+            <img src="Picsart_26-04-17_15-18-45-258.png" class="main-logo" alt="Doctor Store Logo">
+            <div class="store-title">DOCTOR STORE</div>
+            <p>وجهتك الأولى لأقوى الكتب الخارجية والمراجعات النهائية</p>
+        </div>
+
+        <div class="products-grid" id="productsGrid">
+            </div>
     </div>
 
-    <div id="main-app">
-        
-        <video autoplay muted loop playsinline class="video-bg" id="bg-video">
-            <source src="Pin by Yare Mendez on insp _ Trippy visuals_ Dark nature aesthetic_ Film texture(MP4).mp4" type="video/mp4">
-        </video>
-        <header>
-            <nav>
-                <a onclick="showCatalog()">HOME</a>
-                <a onclick="showCatalog()">CATALOG</a>
-                <a href="#">CONTACT</a>
-            </nav>
-        </header>
-
-        <div id="catalog-page">
-            <h1>Inside my mind</h1>
-            <div class="subtitle">Featured collection</div>
-            
-            <div class="grid">
-                <div class="card" onclick="showProduct('Inside my mind 1', 'LE 999.00 EGP', 'https://via.placeholder.com/500x500/111/fff?text=T-Shirt+1')">
-                    <img src="https://via.placeholder.com/500x500/111/fff?text=T-Shirt+1" alt="Shirt 1">
-                    <h3>Inside my mind</h3>
-                    <p class="price">LE 999.00 EGP</p>
-                </div>
-                
-                <div class="card" onclick="showProduct('Inside my mind 2', 'LE 999.00 EGP', 'https://via.placeholder.com/500x500/111/fff?text=T-Shirt+2')">
-                    <img src="https://via.placeholder.com/500x500/111/fff?text=T-Shirt+2" alt="Shirt 2">
-                    <h3>Inside my mind</h3>
-                    <p class="price">LE 999.00 EGP</p>
-                </div>
-                
-                <div class="card" onclick="showProduct('Inside my mind 3', 'LE 999.00 EGP', 'https://via.placeholder.com/500x500/111/fff?text=T-Shirt+3')">
-                    <img src="https://via.placeholder.com/500x500/111/fff?text=T-Shirt+3" alt="Shirt 3">
-                    <h3>Inside my mind</h3>
-                    <p class="price">LE 999.00 EGP</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="product-page">
-            <div class="product-container">
-                <div class="product-image">
-                    <img id="detail-img" src="" alt="Product Detail">
-                </div>
-                <div class="product-details">
-                    <h1 id="detail-title">Title</h1>
-                    <div class="price-large" id="detail-price">Price</div>
-                    
-                    <div class="quantity">
-                        <label>Quantity</label>
-                        <input type="number" value="1" min="1">
-                    </div>
-                    
-                    <button class="btn">Add to cart</button>
-                    <button class="size-chart">Size Chart</button>
-                </div>
-            </div>
-        </div>
-
+    <div id="orderPage" class="page">
+        <button onclick="showPage('homePage')" style="color:white; background:none; border:1px solid white; cursor:pointer; align-self:flex-start;">عودة</button>
+        <h2>اتمام الطلب - الدفع عبر فوري <span class="fawry-tag">●</span></h2>
+        <div id="selectedProductInfo"></div>
+        <form class="order-form" id="purchaseForm">
+            <input type="text" id="userName" placeholder="الاسم الكامل" required>
+            <input type="tel" id="userPhone" placeholder="رقم الهاتف" required>
+            <input type="text" id="userAddress" placeholder="العنوان بالتفصيل" required>
+            <select id="userCity">
+                <option value="القاهرة">القاهرة</option>
+                <option value="الإسكندرية">الإسكندرية</option>
+                <option value="الدقهلية">الدقهلية</option>
+                </select>
+            <button type="submit" class="btn-confirm">تأكيد الطلب عبر واتساب</button>
+        </form>
     </div>
 
     <script>
-        // دالة الدخول للمتجر من الشاشة الافتتاحية
-        function enterStore() {
-            document.getElementById('splash').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-            showCatalog();
+        // بيانات المنتجات الـ 6
+        const products = [
+            { id: 1, name: "كتاب المعاصر - رياضيات", price: "150", img: "https://via.placeholder.com/250x300?text=Book+1" },
+            { id: 2, name: "كتاب الامتحان - كيمياء", price: "140", img: "https://via.placeholder.com/250x300?text=Book+2" },
+            { id: 3, name: "كتاب الأضواء - لغة عربية", price: "130", img: "https://via.placeholder.com/250x300?text=Book+3" },
+            { id: 4, name: "كتاب ميرسي - فرنسي", price: "110", img: "https://via.placeholder.com/250x300?text=Book+4" },
+            { id: 5, name: "كتاب كيان - لغة عربية", price: "160", img: "https://via.placeholder.com/250x300?text=Book+5" },
+            { id: 6, name: "كتاب العمالقة - إنجليزي", price: "125", img: "https://via.placeholder.com/250x300?text=Book+6" },
+        ];
+
+        const whatsappNumber = "201023708424"; // ضع رقمك هنا
+        let currentProduct = null;
+
+        // توليد المنتجات
+        const grid = document.getElementById('productsGrid');
+        products.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.onclick = () => openOrder(p);
+            card.innerHTML = `
+                <img src="${p.img}" class="product-img">
+                <h3>${p.name}</h3>
+                <p>السعر: ${p.price} جنيه</p>
+                <button style="padding:10px; cursor:pointer;">اطلب الآن</button>
+            `;
+            grid.appendChild(card);
+        });
+
+        // التحكم في الصفحات
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0,0);
         }
 
-        // دالة العودة لصفحة المنتجات
-        function showCatalog() {
-            window.scrollTo(0, 0);
-            document.getElementById('catalog-page').style.display = 'block';
-            document.getElementById('product-page').style.display = 'none';
+        function openOrder(product) {
+            currentProduct = product;
+            document.getElementById('selectedProductInfo').innerHTML = `<h3>أنت تطلب: ${product.name}</h3>`;
+            showPage('orderPage');
         }
 
-        // دالة فتح منتج معين وعرض تفاصيله
-        function showProduct(title, price, imageSrc) {
-            window.scrollTo(0, 0);
-            document.getElementById('catalog-page').style.display = 'none';
-            document.getElementById('product-page').style.display = 'block';
+        // إرسال البيانات للواتساب
+        document.getElementById('purchaseForm').onsubmit = function(e) {
+            e.preventDefault();
+            const name = document.getElementById('userName').value;
+            const phone = document.getElementById('userPhone').value;
+            const address = document.getElementById('userAddress').value;
+            const city = document.getElementById('userCity').value;
 
-            // تغيير بيانات الصفحة بناءً على المنتج الذي تم الضغط عليه
-            document.getElementById('detail-title').innerText = title;
-            document.getElementById('detail-price').innerText = price;
-            document.getElementById('detail-img').src = imageSrc;
-        }
+            const message = `طلب جديد من DOCTOR STORE%0A---%0Aالمنتج: ${currentProduct.name}%0Aالسعر: ${currentProduct.price} جنيه%0Aطريقة الدفع: فوري%0A---%0Aاسم العميل: ${name}%0Aالرقم: ${phone}%0Aالعنوان: ${address}%0Aالمحافظة: ${city}`;
+            
+            window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+        };
+
+        // لوجو ثابت يظهر عند السكرول
+        window.onscroll = function() {
+            const stickyLogo = document.getElementById('sticky-logo');
+            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                stickyLogo.style.display = "block";
+            } else {
+                stickyLogo.style.display = "none";
+            }
+        };
     </script>
 </body>
 </html>
