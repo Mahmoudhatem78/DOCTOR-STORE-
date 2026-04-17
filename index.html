@@ -1,223 +1,252 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="ltr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Websy Store Clone</title>
+    <style>
+        /* * إعدادات التصميم الأساسية (CSS)
+         */
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Courier New', Courier, monospace; /* خط مقارب للذي في الفيديو */
+            background-color: #000; 
+            color: #fff; 
+            overflow-x: hidden; 
+        }
 
-<title>DOCTOR STORE</title>
+        /* إعدادات فيديو الخلفية */
+        .video-bg { 
+            position: fixed; 
+            right: 0; 
+            bottom: 0; 
+            min-width: 100%; 
+            min-height: 100%; 
+            z-index: -1; /* لضمان بقاء الفيديو في الخلفية دائماً */
+            object-fit: cover; 
+            opacity: 0.6; /* نسبة الشفافية لكي تظهر المنتجات بوضوح */
+        }
 
-<style>
-body{
-    margin:0;
-    font-family: Arial;
-    background:black;
-    color:white;
-}
+        /* تصميم الشاشة الافتتاحية (الواجهة) */
+        #splash { 
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            cursor: pointer; 
+            position: relative; 
+            z-index: 10; 
+            background: #000; 
+        }
+        #splash img { 
+            max-width: 90%; 
+            max-height: 90vh; 
+            object-fit: contain;
+        }
 
-/* ===== الخلفية (حط الرابط بتاعك هنا) ===== */
-body::before{
-    content:"";
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:url("PUT-YOUR-BACKGROUND-HERE") center/cover no-repeat;
-    opacity:0.15;
-    z-index:-1;
-}
+        /* الحاوية الرئيسية للمتجر */
+        #main-app { 
+            display: none; /* مخفي في البداية حتى يتم النقر على الواجهة */
+            padding: 20px 5%; 
+            z-index: 1; 
+            position: relative; 
+        }
 
-/* ===== الهيدر ===== */
-header{
-    position:fixed;
-    top:0;
-    width:100%;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:10px 20px;
-    background:rgba(0,0,0,0.7);
-    backdrop-filter:blur(10px);
-    z-index:999;
-}
+        /* القائمة العلوية (Header) */
+        header { 
+            display: flex; 
+            justify-content: flex-start; 
+            padding: 20px 0; 
+            border-bottom: 1px solid rgba(255,255,255,0.2); 
+            margin-bottom: 30px;
+        }
+        header nav a { 
+            color: #fff; 
+            text-decoration: none; 
+            margin-right: 30px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 1px;
+        }
+        header nav a:hover { color: #aaa; }
 
-/* ===== اللوجو ===== */
-.logo{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
+        /* العناوين */
+        h1 { text-align: center; font-size: 2.5em; text-transform: uppercase; margin-bottom: 5px; }
+        .subtitle { text-align: center; font-size: 1.2em; color: #ccc; margin-bottom: 40px; text-transform: uppercase;}
 
-.logo img{
-    width:50px;
-    height:50px;
-    animation:spin 6s linear infinite;
-}
+        /* شبكة المنتجات (Catalog) */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 30px; 
+            padding: 20px 0; 
+        }
+        .card { 
+            background: transparent; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: transform 0.3s ease; 
+        }
+        .card:hover { transform: scale(1.03); } /* تأثير تكبير بسيط عند التمرير بالماوس */
+        .card img { 
+            width: 100%; 
+            height: auto; 
+            border-radius: 5px; 
+            background-color: #111; /* لون خلفية بديل للصورة */
+        }
+        .card h3 { margin: 15px 0 5px 0; font-size: 1.1em; }
+        .price { color: #fff; font-weight: bold; margin: 0; font-size: 0.9em;}
 
-/* حط رابط اللوجو هنا */
-.logo img{
-    content:url("Picsart_26-04-17_15-18-45-258.png");
-}
+        /* صفحة تفاصيل المنتج الواحد */
+        #product-page { display: none; padding: 40px 0; }
+        .product-container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 50px; 
+            justify-content: center; 
+        }
+        .product-image { flex: 1; min-width: 300px; max-width: 450px; }
+        .product-image img { width: 100%; border-radius: 10px; background-color: #111; }
+        
+        .product-details { flex: 1; min-width: 300px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .product-details h1 { text-align: left; margin-top: 0; font-size: 2em; }
+        .product-details .price-large { color: #ccc; font-size: 1.2em; margin-bottom: 30px; }
+        
+        .quantity { margin: 20px 0 30px 0; display:flex; align-items: center; gap: 15px;}
+        .quantity label { text-transform: uppercase; font-size: 0.9em; }
+        .quantity input { 
+            width: 60px; 
+            padding: 12px; 
+            text-align: center; 
+            background: transparent; 
+            color: #fff; 
+            border: 1px solid #fff; 
+            font-size: 1em;
+        }
 
-@keyframes spin{
-    from{transform:rotate(0)}
-    to{transform:rotate(360deg)}
-}
-
-.logo span{
-    font-weight:bold;
-    letter-spacing:3px;
-}
-
-/* ===== عند الاسكرول ===== */
-.small{
-    transform:scale(0.7);
-    position:fixed;
-    left:10px;
-    top:10px;
-}
-
-/* ===== المنتجات ===== */
-.container{
-    margin-top:100px;
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:30px;
-    padding:20px;
-}
-
-.card{
-    background:#111;
-    padding:20px;
-    text-align:center;
-    border-radius:15px;
-    transition:0.4s;
-}
-
-.card:hover{
-    transform:translateY(-10px) scale(1.05);
-    box-shadow:0 0 20px white;
-}
-
-.card img{
-    width:100%;
-    height:250px;
-    object-fit:contain;
-    animation:float 3s ease-in-out infinite;
-}
-
-@keyframes float{
-    0%,100%{transform:translateY(0)}
-    50%{transform:translateY(-10px)}
-}
-
-/* ===== زر الطلب ===== */
-button{
-    margin-top:10px;
-    padding:10px;
-    border:none;
-    background:white;
-    color:black;
-    cursor:pointer;
-}
-
-/* ===== الفورم ===== */
-.form-box{
-    display:none;
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    background:#111;
-    padding:20px;
-    border-radius:15px;
-    width:300px;
-}
-
-input{
-    width:100%;
-    margin:5px 0;
-    padding:8px;
-}
-
-</style>
+        /* زر الإضافة للسلة */
+        .btn { 
+            background: #fff; 
+            color: #000; 
+            border: 1px solid #fff; 
+            padding: 15px; 
+            cursor: pointer; 
+            font-size: 1em; 
+            text-transform: uppercase; 
+            font-weight: bold;
+            transition: all 0.3s; 
+            width: 100%;
+            max-width: 300px;
+        }
+        .btn:hover { background: #000; color: #fff; }
+        
+        .size-chart { 
+            background: transparent; 
+            border: none; 
+            color: #fff; 
+            text-decoration: underline; 
+            text-align: left; 
+            padding-left: 0; 
+            margin-top: 15px; 
+            cursor: pointer; 
+        }
+    </style>
 </head>
-
 <body>
 
-<header id="header">
-    <div class="logo">
-        <img>
-        <span>DOCTOR STORE</span>
+    <div id="splash" onclick="enterStore()">
+        <img src="https://via.placeholder.com/800x600/000000/FFFFFF?text=CLICK+TO+ENTER" alt="Enter Store">
     </div>
-</header>
 
-<!-- المنتجات -->
-<div class="container" id="products"></div>
+    <div id="main-app">
+        
+        <video autoplay muted loop playsinline class="video-bg" id="bg-video">
+            <source src="Pin by Yare Mendez on insp _ Trippy visuals_ Dark nature aesthetic_ Film texture(MP4).mp4" type="video/mp4">
+        </video>
+        <header>
+            <nav>
+                <a onclick="showCatalog()">HOME</a>
+                <a onclick="showCatalog()">CATALOG</a>
+                <a href="#">CONTACT</a>
+            </nav>
+        </header>
 
-<!-- فورم الطلب -->
-<div class="form-box" id="formBox">
-    <h3>ادخل بياناتك</h3>
-    <input placeholder="اسمك" id="name">
-    <input placeholder="رقمك" id="phone">
-    <input placeholder="عنوانك" id="address">
-    <button onclick="sendOrder()">تأكيد الطلب</button>
-</div>
+        <div id="catalog-page">
+            <h1>Inside my mind</h1>
+            <div class="subtitle">Featured collection</div>
+            
+            <div class="grid">
+                <div class="card" onclick="showProduct('Inside my mind 1', 'LE 999.00 EGP', 'https://via.placeholder.com/500x500/111/fff?text=T-Shirt+1')">
+                    <img src="https://via.placeholder.com/500x500/111/fff?text=T-Shirt+1" alt="Shirt 1">
+                    <h3>Inside my mind</h3>
+                    <p class="price">LE 999.00 EGP</p>
+                </div>
+                
+                <div class="card" onclick="showProduct('Inside my mind 2', 'LE 999.00 EGP', 'https://via.placeholder.com/500x500/111/fff?text=T-Shirt+2')">
+                    <img src="https://via.placeholder.com/500x500/111/fff?text=T-Shirt+2" alt="Shirt 2">
+                    <h3>Inside my mind</h3>
+                    <p class="price">LE 999.00 EGP</p>
+                </div>
+                
+                <div class="card" onclick="showProduct('Inside my mind 3', 'LE 999.00 EGP', 'https://via.placeholder.com/500x500/111/fff?text=T-Shirt+3')">
+                    <img src="https://via.placeholder.com/500x500/111/fff?text=T-Shirt+3" alt="Shirt 3">
+                    <h3>Inside my mind</h3>
+                    <p class="price">LE 999.00 EGP</p>
+                </div>
+            </div>
+        </div>
 
-<script>
+        <div id="product-page">
+            <div class="product-container">
+                <div class="product-image">
+                    <img id="detail-img" src="" alt="Product Detail">
+                </div>
+                <div class="product-details">
+                    <h1 id="detail-title">Title</h1>
+                    <div class="price-large" id="detail-price">Price</div>
+                    
+                    <div class="quantity">
+                        <label>Quantity</label>
+                        <input type="number" value="1" min="1">
+                    </div>
+                    
+                    <button class="btn">Add to cart</button>
+                    <button class="size-chart">Size Chart</button>
+                </div>
+            </div>
+        </div>
 
-/* ===== المنتجات (6 كتب) ===== */
-const products = [
-{ name:"Biology Book", price:150, img:"https://placehold.co/300x300?text=Book1"},
-{ name:"Chemistry Book", price:180, img:"https://placehold.co/300x300?text=Book2"},
-{ name:"Physics Book", price:200, img:"https://placehold.co/300x300?text=Book3"},
-{ name:"Math Book", price:170, img:"https://placehold.co/300x300?text=Book4"},
-{ name:"English Book", price:120, img:"https://placehold.co/300x300?text=Book5"},
-{ name:"History Book", price:140, img:"https://placehold.co/300x300?text=Book6"}
-];
+    </div>
 
-let selectedProduct = "";
+    <script>
+        // دالة الدخول للمتجر من الشاشة الافتتاحية
+        function enterStore() {
+            document.getElementById('splash').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            showCatalog();
+        }
 
-/* عرض المنتجات */
-const container = document.getElementById("products");
+        // دالة العودة لصفحة المنتجات
+        function showCatalog() {
+            window.scrollTo(0, 0);
+            document.getElementById('catalog-page').style.display = 'block';
+            document.getElementById('product-page').style.display = 'none';
+        }
 
-products.forEach(p=>{
-    container.innerHTML += `
-    <div class="card">
-        <img src="${p.img}">
-        <h3>${p.name}</h3>
-        <p>${p.price} EGP</p>
-        <button onclick="order('${p.name}')">اطلب الان</button>
-    </div>`;
-});
+        // دالة فتح منتج معين وعرض تفاصيله
+        function showProduct(title, price, imageSrc) {
+            window.scrollTo(0, 0);
+            document.getElementById('catalog-page').style.display = 'none';
+            document.getElementById('product-page').style.display = 'block';
 
-/* فتح الفورم */
-function order(name){
-    selectedProduct = name;
-    document.getElementById("formBox").style.display="block";
-}
-
-/* ارسال الطلب */
-function sendOrder(){
-    let name = document.getElementById("name").value;
-    let phone = document.getElementById("phone").value;
-    let address = document.getElementById("address").value;
-
-    let msg = `طلب جديد%0Aالمنتج: ${selectedProduct}%0Aالاسم: ${name}%0Aالرقم: ${phone}%0Aالعنوان: ${address}%0Aالدفع: فوري`;
-
-    /* غير الرقم ده برقمك */
-    window.open("https://wa.me/201023708424?text="+msg);
-}
-
-/* تصغير اللوجو عند الاسكرول */
-window.addEventListener("scroll",()=>{
-    let header = document.getElementById("header");
-    if(window.scrollY > 50){
-        header.classList.add("small");
-    }else{
-        header.classList.remove("small");
-    }
-});
-
-</script>
-
+            // تغيير بيانات الصفحة بناءً على المنتج الذي تم الضغط عليه
+            document.getElementById('detail-title').innerText = title;
+            document.getElementById('detail-price').innerText = price;
+            document.getElementById('detail-img').src = imageSrc;
+        }
+    </script>
 </body>
 </html>
