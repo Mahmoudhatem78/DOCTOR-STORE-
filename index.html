@@ -3,200 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DOCTOR STORE | للكتب الخارجية</title>
+    <title>DOCTOR STORE | Professional Edition</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;900&display=swap');
 
         :root {
-            --primary: #ffffff;
-            --bg-black: #000000;
-            --accent: #f0f0f0;
+            --main-gold: #fbff00;
+            --soft-white: #f8f9fa;
+            --glass: rgba(255, 255, 255, 0.08);
+            --glow: 0 0 20px rgba(251, 255, 0, 0.4);
         }
 
         body, html {
-            margin: 0; padding: 0; width: 100%; font-family: 'Cairo', sans-serif;
-            background-color: var(--bg-black); color: var(--primary);
-            overflow-x: hidden; scroll-behavior: smooth;
+            margin: 0; padding: 0; min-height: 100vh; font-family: 'Cairo', sans-serif;
+            background-color: #000; color: #fff; overflow-x: hidden;
         }
 
         /* فيديو الخلفية */
-        .video-background {
+        .video-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; object-fit: cover; opacity: 0.4; /* تقليل الشفافية لراحة العين */
+            z-index: -2; overflow: hidden;
+        }
+        #bgVideo {
+            width: 100%; height: 100%; object-fit: cover; opacity: 0.5;
+        }
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 20%, #000 100%);
+            z-index: -1;
         }
 
-        /* اللوجو العائم عند السكرول */
-        #sticky-logo {
-            position: fixed; top: 20px; right: 20px; width: 60px; height: 60px;
-            z-index: 1000; display: none; /* يظهر بالـ JS */
-            animation: rotate 5s linear infinite;
+        /* الهيدر واللوجو */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 5%; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--glass);
         }
 
-        /* الحاوية الرئيسية */
-        .page {
-            position: relative; z-index: 10; width: 100%; min-height: 100vh;
-            display: none; flex-direction: column; align-items: center; padding: 20px;
-            box-sizing: border-box;
+        .logo-box {
+            width: 80px; height: 80px; perspective: 1000px;
         }
-        .active { display: flex; animation: fadeIn 0.8s ease; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* الشعار الرئيسي */
-        .main-logo-container {
-            text-align: center; margin-top: 50px;
+        .logo-3d {
+            width: 100%; height: 100%; object-fit: contain;
+            animation: rotate3d 5s linear infinite;
+            filter: drop-shadow(0 0 10px #fff);
         }
-        .main-logo {
-            width: 150px; height: 150px;
-            animation: rotate 8s linear infinite;
-            filter: drop-shadow(0 0 15px white);
+        @keyframes rotate3d {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
         }
 
-        .store-title {
-            font-size: 3rem; font-weight: 900; letter-spacing: 5px;
-            margin: 20px 0; border-bottom: 2px solid white;
+        /* سلة التسوق */
+        .cart-icon {
+            position: relative; cursor: pointer; font-size: 1.5rem;
+        }
+        #cart-count {
+            position: absolute; top: -10px; right: -10px; background: var(--main-gold);
+            color: #000; border-radius: 50%; padding: 2px 7px; font-size: 0.8rem; font-weight: bold;
         }
 
-        /* شبكة المنتجات */
+        /* شبكة المنتجات المستوحاة من الصورة */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        
         .products-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px; width: 100%; max-width: 1200px; padding: 40px 0;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;
         }
 
-        .product-card {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px; padding: 20px; text-align: center;
-            transition: 0.4s ease; backdrop-filter: blur(10px);
-            animation: pulse 4s infinite ease-in-out; /* حركة ديناميكية وهي ثابتة */
+        .book-card {
+            background: #fff; border-radius: 30px; padding: 25px; color: #333;
+            text-align: center; transition: 0.5s; position: relative;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        .book-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 0 30px var(--main-gold);
+        }
+        .book-img {
+            width: 100%; border-radius: 20px; transition: 0.5s;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));
+        }
+        .book-card:hover .book-img { transform: scale(1.05); filter: brightness(1.1) drop-shadow(0 0 15px #fbff00); }
+
+        .price-tag {
+            background: var(--main-gold); color: #000; padding: 10px 20px;
+            border-radius: 12px; font-weight: 900; display: inline-block; margin-top: 15px;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(255,255,255,0.1); }
-            50% { transform: scale(1.02); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .qty-controls {
+            display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 20px;
+        }
+        .qty-btn {
+            background: #e0f2f1; border: none; width: 35px; height: 35px;
+            border-radius: 50%; cursor: pointer; font-size: 1.2rem; color: #00796b;
         }
 
-        .product-card:hover { background: white; color: black; }
-        .product-img { width: 100%; height: 250px; object-fit: contain; margin-bottom: 15px; }
+        /* صفحة التفاصيل */
+        #detailsPage {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 200; display: none; padding: 50px 20px;
+        }
+        .details-container {
+            display: flex; flex-wrap: wrap; gap: 50px; max-width: 1100px; margin: auto;
+        }
+        .details-img-box { flex: 1; min-width: 300px; }
+        .details-info { flex: 1.5; color: white; }
 
-        /* نموذج الطلب */
-        .order-form {
-            display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px;
-            background: rgba(20, 20, 20, 0.9); padding: 30px; border-radius: 15px;
-            border: 1px solid white;
+        /* سلة المشتريات الجانبية */
+        #cartSidebar {
+            position: fixed; top: 0; left: -100%; width: 350px; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 300; transition: 0.4s;
+            padding: 30px; border-right: 1px solid var(--main-gold);
         }
-        .order-form input, .order-form select {
-            padding: 12px; border: 1px solid white; background: transparent; color: white;
-        }
-        .btn-confirm {
-            background: white; color: black; border: none; padding: 15px;
-            font-weight: bold; cursor: pointer; transition: 0.3s;
-        }
-        .btn-confirm:hover { background: #ccc; }
+        #cartSidebar.active { left: 0; }
 
-        .fawry-tag { color: #5cb85c; font-weight: bold; font-size: 0.8rem; }
+        .btn-buy {
+            width: 100%; background: var(--main-gold); color: #000; border: none;
+            padding: 15px; font-weight: 900; border-radius: 15px; cursor: pointer;
+            margin-top: 20px; font-size: 1.1rem;
+        }
     </style>
 </head>
 <body>
 
-    <video autoplay muted loop class="video-background">
-        <source src="Pin by Yare Mendez on insp _ Trippy visuals_ Dark nature aesthetic_ Film texture(MP4).mp4" type="video/mp4">
-    </video>
+    <div class="video-container">
+        <video autoplay muted loop id="bgVideo">
+            <source src="Pin by Yare Mendez on insp _ Trippy visuals_ Dark nature aesthetic_ Film texture(MP4).mp4" type="video/mp4">
+        </video>
+        <div class="overlay"></div>
+    </div>
 
-    <img src="Picsart_26-04-17_15-18-45-258.png" id="sticky-logo" alt="Logo">
-
-    <div id="homePage" class="page active">
-        <div class="main-logo-container">
-            <img src="Picsart_26-04-17_15-18-45-258.png" class="main-logo" alt="Doctor Store Logo">
-            <div class="store-title">DOCTOR STORE</div>
-            <p>وجهتك الأولى لأقوى الكتب الخارجية والمراجعات النهائية</p>
+    <header>
+        <div class="logo-box">
+            <img src="Picsart_26-04-17_15-18-45-258.png" class="logo-3d" alt="DOCTOR STORE">
         </div>
+        <div style="font-size: 1.8rem; font-weight: 900; letter-spacing: 2px;">DOCTOR STORE</div>
+        <div class="cart-icon" onclick="toggleCart()">
+            🛒 <span id="cart-count">0</span>
+        </div>
+    </header>
 
-        <div class="products-grid" id="productsGrid">
+    <div class="container" id="homePage">
+        <h1 style="text-align: center; margin-bottom: 50px; font-size: 2.5rem;">أقوى المراجعات لعام 2026</h1>
+        <div class="products-grid" id="mainGrid">
             </div>
     </div>
 
-    <div id="orderPage" class="page">
-        <button onclick="showPage('homePage')" style="color:white; background:none; border:1px solid white; cursor:pointer; align-self:flex-start;">عودة</button>
-        <h2>اتمام الطلب - الدفع عبر فوري <span class="fawry-tag">●</span></h2>
-        <div id="selectedProductInfo"></div>
-        <form class="order-form" id="purchaseForm">
-            <input type="text" id="userName" placeholder="الاسم الكامل" required>
-            <input type="tel" id="userPhone" placeholder="رقم الهاتف" required>
-            <input type="text" id="userAddress" placeholder="العنوان بالتفصيل" required>
-            <select id="userCity">
-                <option value="القاهرة">القاهرة</option>
-                <option value="الإسكندرية">الإسكندرية</option>
-                <option value="الدقهلية">الدقهلية</option>
-                </select>
-            <button type="submit" class="btn-confirm">تأكيد الطلب عبر واتساب</button>
-        </form>
+    <div id="detailsPage">
+        <button onclick="closeDetails()" style="background:none; color:white; border:1px solid white; cursor:pointer; padding:10px 20px;">X اغلاق</button>
+        <div class="details-container" id="detailsContent">
+            </div>
+    </div>
+
+    <div id="cartSidebar">
+        <h2>سلتك 🛒</h2>
+        <div id="cartItems"></div>
+        <hr>
+        <h3>الإجمالي: <span id="totalPrice">0</span> جنيه</h3>
+        <button class="btn-buy" onclick="checkout()">تأكيد الطلب (فوري)</button>
+        <button onclick="toggleCart()" style="margin-top:10px; color:white; background:none; border:none; cursor:pointer;">اغلاق السلة</button>
     </div>
 
     <script>
-        // بيانات المنتجات الـ 6
         const products = [
-            { id: 1, name: "كتاب المعاصر - رياضيات", price: "150", img: "https://via.placeholder.com/250x300?text=Book+1" },
-            { id: 2, name: "كتاب الامتحان - كيمياء", price: "140", img: "https://via.placeholder.com/250x300?text=Book+2" },
-            { id: 3, name: "كتاب الأضواء - لغة عربية", price: "130", img: "https://via.placeholder.com/250x300?text=Book+3" },
-            { id: 4, name: "كتاب ميرسي - فرنسي", price: "110", img: "https://via.placeholder.com/250x300?text=Book+4" },
-            { id: 5, name: "كتاب كيان - لغة عربية", price: "160", img: "https://via.placeholder.com/250x300?text=Book+5" },
-            { id: 6, name: "كتاب العمالقة - إنجليزي", price: "125", img: "https://via.placeholder.com/250x300?text=Book+6" },
+            { id: 1, name: "مراجعة نهائية 2 ثانوي - إنجليزي", teacher: "أ. عبد الحميد حامد", price: 140, img: "https://via.placeholder.com/400x500/00796b/ffffff?text=English+Book" },
+            { id: 2, name: "الموسوعة في الكيمياء - 3 ثانوي", teacher: "د. محمد زويل", price: 180, img: "https://via.placeholder.com/400x500/c62828/ffffff?text=Chemistry" },
+            { id: 3, name: "كتاب كيان - لغة عربية", teacher: "أ. محمود شاكر", price: 160, img: "https://via.placeholder.com/400x500/1565c0/ffffff?text=Arabic" },
+            { id: 4, name: "الوسام في الفيزياء", teacher: "أ. أحمد بركة", price: 175, img: "https://via.placeholder.com/400x500/ff8f00/ffffff?text=Physics" },
+            { id: 5, name: "المعاصر - رياضيات", teacher: "نخبة من الخبراء", price: 200, img: "https://via.placeholder.com/400x500/2e7d32/ffffff?text=Math" },
+            { id: 6, name: "المرجع في الأحياء", teacher: "د. حسن الديب", price: 155, img: "https://via.placeholder.com/400x500/4527a0/ffffff?text=Biology" }
         ];
 
-        const whatsappNumber = "201023708424"; // ضع رقمك هنا
-        let currentProduct = null;
+        let cart = [];
 
-        // توليد المنتجات
-        const grid = document.getElementById('productsGrid');
+        // عرض المنتجات
+        const grid = document.getElementById('mainGrid');
         products.forEach(p => {
             const card = document.createElement('div');
-            card.className = 'product-card';
-            card.onclick = () => openOrder(p);
+            card.className = 'book-card';
             card.innerHTML = `
-                <img src="${p.img}" class="product-img">
-                <h3>${p.name}</h3>
-                <p>السعر: ${p.price} جنيه</p>
-                <button style="padding:10px; cursor:pointer;">اطلب الآن</button>
+                <img src="${p.img}" class="book-img" onclick="showDetails(${p.id})">
+                <h3 style="margin: 15px 0 5px 0;">${p.name}</h3>
+                <p style="color: #666; font-size: 0.9rem;">${p.teacher}</p>
+                <div class="price-tag">السعر: ${p.price} جنيهاً</div>
+                <div class="qty-controls">
+                    <button class="qty-btn" onclick="addToCart(${p.id})">+</button>
+                    <span style="font-weight:bold" id="q-${p.id}">0</span>
+                    <button class="qty-btn" onclick="removeFromCart(${p.id})">-</button>
+                </div>
             `;
             grid.appendChild(card);
         });
 
-        // التحكم في الصفحات
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            window.scrollTo(0,0);
+        function showDetails(id) {
+            const p = products.find(x => x.id === id);
+            const content = document.getElementById('detailsContent');
+            content.innerHTML = `
+                <div class="details-img-box">
+                    <img src="${p.img}" style="width:100%; border-radius:30px; box-shadow: 0 0 50px var(--main-gold);">
+                </div>
+                <div class="details-info">
+                    <h1 style="font-size:3rem">${p.name}</h1>
+                    <p style="font-size:1.5rem">المدرس: ${p.teacher}</p>
+                    <p>هذا الكتاب يحتوي على أقوى المراجعات والأسئلة المتوقعة لعام 2026، مصمم خصيصاً لمساعدة الطلاب على التفوق.</p>
+                    <div class="price-tag" style="font-size:2rem">السعر: ${p.price} جنيهاً</div>
+                    <button class="btn-buy" onclick="addToCart(${p.id}); closeDetails(); toggleCart();">أضف للسلة والآن</button>
+                </div>
+            `;
+            document.getElementById('detailsPage').style.display = 'block';
         }
 
-        function openOrder(product) {
-            currentProduct = product;
-            document.getElementById('selectedProductInfo').innerHTML = `<h3>أنت تطلب: ${product.name}</h3>`;
-            showPage('orderPage');
+        function closeDetails() { document.getElementById('detailsPage').style.display = 'none'; }
+
+        function addToCart(id) {
+            const p = products.find(x => x.id === id);
+            const item = cart.find(x => x.id === id);
+            if(item) { item.qty++; } else { cart.push({...p, qty: 1}); }
+            updateCart();
         }
 
-        // إرسال البيانات للواتساب
-        document.getElementById('purchaseForm').onsubmit = function(e) {
-            e.preventDefault();
-            const name = document.getElementById('userName').value;
-            const phone = document.getElementById('userPhone').value;
-            const address = document.getElementById('userAddress').value;
-            const city = document.getElementById('userCity').value;
-
-            const message = `طلب جديد من DOCTOR STORE%0A---%0Aالمنتج: ${currentProduct.name}%0Aالسعر: ${currentProduct.price} جنيه%0Aطريقة الدفع: فوري%0A---%0Aاسم العميل: ${name}%0Aالرقم: ${phone}%0Aالعنوان: ${address}%0Aالمحافظة: ${city}`;
-            
-            window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
-        };
-
-        // لوجو ثابت يظهر عند السكرول
-        window.onscroll = function() {
-            const stickyLogo = document.getElementById('sticky-logo');
-            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-                stickyLogo.style.display = "block";
-            } else {
-                stickyLogo.style.display = "none";
+        function removeFromCart(id) {
+            const item = cart.find(x => x.id === id);
+            if(item) {
+                item.qty--;
+                if(item.qty === 0) cart = cart.filter(x => x.id !== id);
             }
-        };
+            updateCart();
+        }
+
+        function updateCart() {
+            const count = cart.reduce((acc, curr) => acc + curr.qty, 0);
+            document.getElementById('cart-count').innerText = count;
+            
+            // تحديث الأرقام على البطاقات
+            products.forEach(p => {
+                const item = cart.find(x => x.id === p.id);
+                document.getElementById(`q-${p.id}`).innerText = item ? item.qty : 0;
+            });
+
+            const cartItems = document.getElementById('cartItems');
+            cartItems.innerHTML = '';
+            let total = 0;
+            cart.forEach(item => {
+                total += (item.price * item.qty);
+                cartItems.innerHTML += `<p>${item.name} (x${item.qty}) - ${item.price * item.qty} ج</p>`;
+            });
+            document.getElementById('totalPrice').innerText = total;
+        }
+
+        function toggleCart() { document.getElementById('cartSidebar').classList.toggle('active'); }
+
+        function checkout() {
+            if(cart.length === 0) return alert("السلة فارغة!");
+            let orderDetails = cart.map(i => `${i.name} (كمية: ${i.qty})`).join('%0A');
+            let total = document.getElementById('totalPrice').innerText;
+            let msg = `طلب جديد من DOCTOR STORE%0A---%0Aالمنتاجات:%0A${orderDetails}%0A---%0Aالإجمالي: ${total} جنيه%0Aالدفع: فوري`;
+            window.open(`https://wa.me/201023708424?text=${msg}`); // استبدل X بالرقم
+        }
     </script>
 </body>
 </html>
