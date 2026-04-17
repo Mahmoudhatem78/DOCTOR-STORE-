@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Store | Official Bookstore</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@400;700;900&display=swap');
+
+        :root {
+            --gold: #FFD700;
+            --bg-black: #000;
+            --smoke-white: rgba(255, 255, 255, 0.15);
+            --smoke-gray: rgba(100, 100, 100, 0.2);
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--bg-black); 
+            font-family: 'Cairo', sans-serif; /* تم تغيير الخط ليناسب اللغة العربية */
+            color: white; overflow-x: hidden; scroll-behavior: smooth;
+        }
+
+        .en-font { font-family: 'Orbitron', sans-serif; }
+
+        #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+        .page {
+            position: relative; z-index: 10; width: 100%; min-height: 100vh;
+            display: none; flex-direction: column; align-items: center; padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .active { display: flex; animation: fadeIn 0.8s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- الواجهة الرئيسية --- */
+        .splash-content { justify-content: space-between; height: 100vh; }
+        .store-name { font-size: 2.5rem; font-weight: 900; letter-spacing: 5px; text-shadow: 0 0 15px rgba(255,255,255,0.4); margin-top: 15px; }
+        .main-menu { display: flex; flex-direction: column; gap: 30px; text-align: center; }
+        .menu-item { font-size: 1.5rem; letter-spacing: 3px; cursor: pointer; opacity: 0.7; transition: 0.3s; font-weight: 700; }
+        .menu-item:hover { opacity: 1; text-shadow: 0 0 15px white; transform: scale(1.1); }
+
+        /* --- شبكة المنتجات (الكتب) --- */
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 40px; width: 100%; max-width: 1100px; margin-top: 40px; }
+        .product-card {
+            background: rgba(255, 255, 255, 0.03); border-radius: 15px; padding: 20px; transition: 0.4s; cursor: pointer; text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px);
+        }
+        .product-card:hover { border-color: white; transform: translateY(-10px); box-shadow: 0 0 30px rgba(255, 255, 255, 0.1); }
+        .img-box { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 8px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); transition: 0.3s; }
+        .product-card:hover .img-box { filter: drop-shadow(0 0 20px rgba(255,255,255,0.5)); }
+
+        /* --- خلفية الدخان لصفحة المنتج --- */
+        #productDetailPage { background: #000; overflow: hidden; }
+        .smoke-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; background: black; }
+        .smoke-blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.6; animation: drift 15s infinite alternate ease-in-out; }
+        .sb-1 { top: -20%; left: -20%; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0) 70%); animation-duration: 25s; }
+        .sb-2 { bottom: -20%; right: -20%; width: 80vw; height: 80vw; background: radial-gradient(circle, rgba(100,100,100,0.2) 0%, rgba(0,0,0,0) 70%); animation-duration: 30s; animation-direction: alternate-reverse; }
+        .sb-3 { top: 30%; left: 30%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(200,200,200,0.1) 0%, rgba(0,0,0,0) 60%); animation-duration: 20s; }
+        @keyframes drift { 0% { transform: translate(0, 0) scale(1); } 33% { transform: translate(50px, -50px) scale(1.1); } 66% { transform: translate(-30px, 40px) scale(0.9); } 100% { transform: translate(20px, 20px) scale(1); } }
+
+        /* تفاصيل الكتاب */
+        .detail-container { display: flex; flex-wrap: wrap; gap: 50px; max-width: 1000px; width: 100%; margin-top: 50px; justify-content: center; align-items: center; position: relative; z-index: 2; }
+        .detail-img { flex: 1; min-width: 250px; max-width: 350px; aspect-ratio: 3/4; object-fit: cover; border-radius: 10px; filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.3)); animation: floatImg 6s ease-in-out infinite; }
+        @keyframes floatImg { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .detail-info { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px; background: rgba(20, 20, 20, 0.6); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 40px rgba(0,0,0,0.5); text-align: right; }
+        .price-tag { font-size: 1.8rem; color: white; font-weight: bold; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .format-selector { display: flex; gap: 10px; flex-wrap: wrap; }
+        .format-btn { border: 1px solid #555; padding: 10px 18px; cursor: pointer; transition: 0.3s; color: #ccc; font-weight: bold; border-radius: 5px; }
+        .format-btn.selected, .format-btn:hover { border-color: white; background: white; color: black; box-shadow: 0 0 15px rgba(255,255,255,0.4); }
+        .qty-input { background: none; border: 1px solid #555; color: white; padding: 10px; width: 60px; text-align: center; border-radius: 5px; font-size: 1.1rem; }
+        .action-btns { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; }
+        .btn-buy { background: white; color: black; padding: 16px; border: none; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: 0.3s; border-radius: 5px; font-family: 'Cairo', sans-serif;}
+        .btn-buy:hover { background: #ddd; box-shadow: 0 0 25px rgba(255,255,255,0.3); transform: scale(1.02); }
+
+        .back-link { align-self: flex-start; cursor: pointer; color: white; margin-bottom: 20px; font-weight: bold; z-index: 5; opacity: 0.7; font-size: 1.2rem; }
+        .back-link:hover { opacity: 1; text-shadow: 0 0 10px white; }
+
+        .footer-bar { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: auto; padding-bottom: 30px; width: 100%; }
+        .social-bar { display: flex; gap: 25px; }
+        .social-link svg { width: 26px; fill: white; opacity: 0.6; transition: 0.3s; }
+        .social-link:hover svg { opacity: 1; filter: drop-shadow(0 0 8px white); }
+    </style>
+</head>
+<body>
+
+    <canvas id="starfield"></canvas>
+
+    <div id="splashPage" class="page splash-content active">
+        <div style="text-align: center;">
+            <svg width="120" height="120" viewBox="0 0 200 200" id="logoContainer">
+                <g id="logo-mesh" stroke="white" stroke-width="12" fill="none" style="filter: drop-shadow(0 0 10px white);">
+                    <path d="M50,150 L150,50" /><path d="M150,150 L50,50" />
+                    <rect x="40" y="40" width="120" height="120" rx="15" />
+                </g>
+            </svg>
+            <div class="store-name en-font">DOCTOR STORE</div>
+            <div style="color: #ccc; margin-top: 5px; font-size: 1.2rem;">المكتبة الطبية الأولى</div>
+        </div>
+        <nav class="main-menu">
+            <div class="menu-item" onclick="navigateTo('catalogPage')">تصفح الكتب</div>
+            <div class="menu-item" onclick="navigateTo('catalogPage')">الأقسام</div>
+            <div class="menu-item">تواصل معنا</div>
+        </nav>
+        <div class="footer-bar">
+            <div class="social-bar">
+                <a href="#" target="_blank" class="social-link"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.069-4.85.069-3.204 0-3.584-.012-4.849-.069-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+                <a href="#" target="_blank" class="social-link"><svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.65-1.55-1.09-.01 2.83.03 5.66-.02 8.5-.16 2.61-2.14 4.86-4.73 5.37-2.67.55-5.5-1.09-6.18-3.69-.69-2.58 1.25-5.22 3.93-5.32v4.02c-1.23-.05-2.26 1.18-2.03 2.43.21 1.16 1.47 1.83 2.52 1.46 1.15-.36 1.84-1.58 1.68-2.78-.05-4.46-.02-8.91-.03-13.37-.01-1.63-.01-3.26-.01-4.89-.84.23-1.69.45-2.54.67-.01-.13-.02-.27-.03-.4 1.05-.29 2.1-.58 3.16-.89z"/></svg></a>
+            </div>
+        </div>
+    </div>
+
+    <div id="catalogPage" class="page">
+        <div class="back-link" onclick="history.back()">← رجوع</div>
+        <div class="store-name en-font" style="font-size: 1.8rem; margin-bottom: 10px;">المكتبة الطبية</div>
+        <div class="products-grid" id="productsGrid"></div>
+    </div>
+
+    <div id="productDetailPage" class="page">
+        <div class="smoke-container">
+            <div class="smoke-blob sb-1"></div>
+            <div class="smoke-blob sb-2"></div>
+            <div class="smoke-blob sb-3"></div>
+        </div>
+        <div class="back-link" onclick="history.back()">← رجوع للمكتبة</div>
+        <div class="detail-container" id="productDetailContent"></div>
+    </div>
+
+    <script>
+        // ==========================================
+        //  بيانات الكتب (تقدر تعدلها بسهولة من هنا)
+        // ==========================================
+        const products = [
+            { id: 1, name: "محمد صلاح المراجعه النهائيه", author: "حمثلاح", price: "450", img: "https://placehold.co/400x600/1a1a1a/ffffff?text=Anatomy+Book" },
+            { id: 2, name: "محمد عبد الجواد المراجعه النهائيه", author: "عبجواد", price: "320", img: "https://placehold.co/400x600/1a1a1a/ffffff?text=Pharmacology" },
+            { id: 3, name: "عبد المعبود المراجعه النهائيه", author: "عبمعبود", price: "550", img: "https://placehold.co/400x600/1a1a1a/ffffff?text=Surgery+Guide" },
+            { id: 4, name: " المراجعه النهائيه انجلشاوي", author: "انجلشاوي", price: "600", img: "https://placehold.co/400x600/1a1a1a/ffffff?text=Internal+Med" },
+            { id: 5, name: "خالد صقر المراجعه النهائيه", author: "البطيخه", price: "480", img: "https://placehold.co/400x600/1a1a1a/ffffff?text=Pediatrics" },
+            { id: 6, name: "د كرلس المراجعه النهائيه", author: "كيكا", price: "700", img: "https://placehold.co/400x600/1a1a1a/ffffff?text=Neurology" }
+        ];
+
+        // رقم الواتساب الخاص بالمتجر لتلقي الطلبات (ضع رقمك مع كود الدولة)
+        const whatsappNumber = "201023708424";
+
+        // ==========================================
+        //  المنطق الخاص بالتنقل والصفحات
+        // ==========================================
+        window.addEventListener('load', () => {
+            history.replaceState({page: 'splashPage'}, "", "#splashPage");
+        });
+
+        window.onpopstate = function(event) {
+            if (event.state && event.state.page) {
+                renderPage(event.state.page);
+            } else {
+                renderPage('splashPage');
+            }
+        };
+
+        function navigateTo(pageId) {
+            history.pushState({page: pageId}, "", "#" + pageId);
+            renderPage(pageId);
+        }
+
+        function renderPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            const starfield = document.getElementById('starfield');
+            if(pageId === 'productDetailPage'){
+                starfield.style.opacity = '0';
+            } else {
+                starfield.style.opacity = '1';
+            }
+            window.scrollTo(0,0);
+        }
+
+        // بناء شبكة الكتب
+        const grid = document.getElementById('productsGrid');
+        products.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.onclick = () => openProduct(p);
+            card.innerHTML = `
+                <img src="${p.img}" class="img-box" onerror="this.src='https://placehold.co/400x600/111/444?text=Book+Cover'">
+                <div style="margin-top:15px; font-weight:bold; font-size: 1.1rem;">${p.name}</div>
+                <div style="color:#aaa; font-size: 0.9rem; margin-top:5px;">تأليف: ${p.author}</div>
+                <div style="color:var(--gold); margin-top:10px; font-weight:bold;">${p.price} ج.م</div>
+            `;
+            grid.appendChild(card);
+        });
+
+        // فتح صفحة تفاصيل الكتاب
+        function openProduct(product) {
+            const detailBox = document.getElementById('productDetailContent');
+            detailBox.innerHTML = `
+                <img src="${product.img}" class="detail-img" onerror="this.src='https://placehold.co/400x600/111/444?text=Book+Cover'">
+                <div class="detail-info">
+                    <h1 style="margin:0; color:white;">${product.name}</h1>
+                    <h3 style="margin:0; color:#aaa; font-weight:normal;">تأليف: ${product.author}</h3>
+                    <div class="price-tag">${product.price} ج.م</div>
+                    <p style="color:#ccc; font-size:1rem; line-height: 1.6;">نسخة أصلية معتمدة. هذا الكتاب يعتبر مرجعاً أساسياً ومصمماً خصيصاً لطلاب وخريجي المجال الطبي بأسلوب علمي حديث.</p>
+                    
+                    <div>
+                        <span style="font-size:0.9rem; color:#aaa; display:block; margin-bottom:8px;">اختر نوع النسخة:</span>
+                        <div class="format-selector">
+                            <div class="format-btn selected" onclick="selectFormat(this)">ورقي (غلاف عادي)</div>
+                            <div class="format-btn" onclick="selectFormat(this)">ورقي (غلاف مقوى)</div>
+                            <div class="format-btn" onclick="selectFormat(this)">نسخة رقمية (PDF)</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span style="font-size:0.9rem; color:#aaa; display:block; margin-bottom:8px;">الكمية:</span>
+                        <input type="number" class="qty-input" id="qtyInput" value="1" min="1">
+                    </div>
+
+                    <div class="action-btns">
+                        <button class="btn-buy" onclick="buyNow('${product.name}', '${product.price}')">اطلب الآن عبر واتساب</button>
+                    </div>
+                </div>
+            `;
+            navigateTo('productDetailPage'); 
+        }
+
+        // اختيار نوع النسخة
+        function selectFormat(btn) {
+            document.querySelectorAll('.format-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        }
+
+        // وظيفة الشراء عبر الواتساب
+        function buyNow(name, price) {
+            const format = document.querySelector('.format-btn.selected').innerText;
+            const qty = document.getElementById('qtyInput').value;
+            const total = parseInt(price) * parseInt(qty);
+            
+            const msg = `مرحباً Doctor Store، أريد طلب هذا الكتاب:%0A%0A*اسم الكتاب:* ${name}%0A*نوع النسخة:* ${format}%0A*الكمية:* ${qty}%0A*الإجمالي التقريبي:* ${total} ج.م%0A%0Aبرجاء تأكيد الطلب.`;
+            
+            window.open(`https://wa.me/${whatsappNumber}?text=${msg}`, '_blank');
+        }
+
+        // ==========================================
+        // كود النجوم وحركة اللوجو 3D (لم يتم المساس به)
+        // ==========================================
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        function initStars() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            stars = [];
+            for(let i=0; i<400; i++) stars.push({ x: Math.random()*canvas.width-canvas.width/2, y: Math.random()*canvas.height-canvas.height/2, z: Math.random()*canvas.width, o: Math.random() });
+        }
+        function drawStars() {
+            ctx.fillStyle = "black"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            for(let s of stars) {
+                s.z -= 3; if (s.z <= 0) s.z = canvas.width;
+                let x = (s.x / s.z) * canvas.width + canvas.width/2;
+                let y = (s.y / s.z) * canvas.height + canvas.height/2;
+                let r = (1 - s.z/canvas.width) * 2;
+                ctx.beginPath(); ctx.fillStyle = `rgba(255, 255, 255, ${s.o})`; ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+            }
+            requestAnimationFrame(drawStars);
+        }
+        window.addEventListener('resize', initStars); initStars(); drawStars();
+
+        const container = document.getElementById('logoContainer');
+        const mesh = document.getElementById('logo-mesh');
+        let isDown = false; let startX, startY;
+        const start = (e) => { isDown = true; startX = (e.pageX || e.touches[0].pageX); startY = (e.pageY || e.touches[0].pageY); mesh.style.transition = "none"; };
+        const move = (e) => { if(!isDown) return; let x = (e.pageX || e.touches[0].pageX); let y = (e.pageY || e.touches[0].pageY);
+            let rotY = (x - startX) * 0.5; let rotX = (startY - y) * 0.5;
+            mesh.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`; };
+        const end = () => { isDown = false; mesh.style.transition = "transform 0.8s ease"; mesh.style.transform = `rotateX(0deg) rotateY(0deg)`; };
+        container.addEventListener('mousedown', start); window.addEventListener('mousemove', move); window.addEventListener('mouseup', end);
+        container.addEventListener('touchstart', start); window.addEventListener('touchmove', move); window.addEventListener('touchend', end);
+    </script>
+</body>
+</html>
