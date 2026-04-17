@@ -490,7 +490,7 @@
         }
 
         .btn-order {
-            background: #25D366; /* WhatsApp Green for context, though theme is b/w, kept green to signal WhatsApp */
+            background: #25D366; 
             color: #fff;
             border: none;
             padding: 15px;
@@ -534,20 +534,18 @@
 </head>
 <body>
 
-    <!-- 🔧 CUSTOMIZATION PLACEHOLDERS: VIDEO & OVERLAY -->
-    <!-- Replace 'YOUR_VIDEO_URL.mp4' with your actual background video link -->
+    <!-- 🛑 ضع رابط فيديو الخلفية الخاص بك في السطر التالي بدلاً من الرابط الموجود 🛑 -->
     <video class="video-background" autoplay loop muted playsinline>
-        <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-dark-background-with-moving-particles-91004-large.mp4" type="Pin by Yare Mendez on insp _ Trippy visuals_ Dark nature aesthetic_ Film texture(MP4).mp4">
+        <source src="Pin by Yare Mendez on insp _ Trippy visuals_ Dark nature aesthetic_ Film texture(MP4).mp4" type="video/mp4">
     </video>
     <div class="overlay"></div>
 
     <!-- 🧠 INTRO SCREEN -->
     <div id="intro-screen">
         <div class="intro-content">
-            <!-- 🔧 CUSTOMIZATION PLACEHOLDERS: LOGO URL -->
-            <!-- Replace src with your Logo URL -->
+            <!-- 🛑 ضع رابط اللوجو الخاص بك في السطر التالي بدلاً من الرابط الموجود (في شاشة البداية) 🛑 -->
             <img src="Picsart_26-04-17_15-18-45-258.png" alt="حوكشه STORE Logo" class="intro-logo">
-            
+
             <h1 class="intro-title">حوكشه STORE</h1>
             <p class="intro-tagline">تجربة جديدة لشراء الكتب الخارجية | The Future of Study</p>
             <button class="btn-enter" onclick="enterStore()">Enter Store / الدخول للمتجر</button>
@@ -557,11 +555,11 @@
     <!-- 🧩 HEADER -->
     <header id="main-header">
         <div class="header-logo-container" onclick="goHome()">
-            <!-- Mini Logo -->
-            <img src="https://cdn-icons-png.flaticon.com/512/3143/3143460.png" alt="Logo" class="header-logo">
+            <!-- 🛑 ضع رابط اللوجو الخاص بك مرة أخرى في السطر التالي (الخاص بالهيدر المصغر) 🛑 -->
+            <img src="Picsart_26-04-17_15-18-45-258.png" alt="Logo" class="header-logo">
             <span class="header-title">حوكشه STORE</span>
         </div>
-        
+
         <div class="cart-icon-wrapper" onclick="toggleCart()">
             <svg class="cart-icon" viewBox="0 0 24 24">
                 <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
@@ -590,13 +588,13 @@
                 <h2 class="details-title" id="detail-title">Product Name</h2>
                 <div class="details-price" id="detail-price">0 EGP</div>
                 <p class="details-desc" id="detail-desc">Premium description goes here...</p>
-                
+
                 <div class="qty-selector">
                     <button class="qty-btn" onclick="updateDetailQty(1)">+</button>
                     <input type="text" class="qty-input" id="detail-qty" value="1" readonly>
                     <button class="qty-btn" onclick="updateDetailQty(-1)">-</button>
                 </div>
-                
+
                 <button class="btn-add-cart" onclick="addToCartFromDetail()">أضف إلى السلة | Add to Cart</button>
             </div>
         </div>
@@ -608,11 +606,11 @@
             <h2>سلة المشتريات | Cart</h2>
             <button class="close-cart" onclick="toggleCart()">&times;</button>
         </div>
-        
+
         <div class="cart-items" id="cart-items-container">
             <!-- Cart items injected here -->
         </div>
-        
+
         <div class="cart-total">
             <span>الإجمالي | Total:</span>
             <span id="cart-total-price">0 EGP</span>
@@ -623,7 +621,7 @@
             <input type="text" id="order-name" class="form-input" placeholder="الاسم بالكامل | Full Name" required>
             <input type="tel" id="order-phone" class="form-input" placeholder="رقم الموبايل | Phone Number" required>
             <input type="text" id="order-address" class="form-input" placeholder="العنوان بالتفصيل | Detailed Address" required>
-            
+
             <div class="payment-info">
                 <strong>الدفع (Vodafone Cash):</strong><br>
                 سيتم التواصل معك عبر الواتساب لتأكيد الطلب وإرسال رقم فودافون كاش لتحويل المبلغ.<br>
@@ -640,8 +638,7 @@
         // Replace with your WhatsApp number (include country code without + or 00, e.g., 201012345678 for Egypt)
         const WHATSAPP_NUMBER = "201023708424"; 
 
-        // Product Data (Exactly 6 external study books)
-        // Replace images with high-quality transparent PNGs of the books if possible
+        // Product Data
         const products = [
             { id: 1, name: "كتاب الفيزياء المتقدمة - 3 ثانوي", price: 350, img: "https://cdn-icons-png.flaticon.com/512/2232/2232688.png", desc: "أقوى كتاب خارجي في الفيزياء للثانوية العامة. يحتوي على أسئلة بنظام التابلت الحديث وشرح مبسط وملخصات حصرية. نسخة فاخرة." },
             { id: 2, name: "المعاصر - رياضيات لغات", price: 420, img: "https://cdn-icons-png.flaticon.com/512/2232/2232688.png", desc: "El Moasser Mathematics for 3rd Secondary. Comprehensive guide with high-order thinking skills (HOTS) questions." },
@@ -660,16 +657,16 @@
             setTimeout(() => {
                 document.getElementById('intro-screen').style.visibility = 'hidden';
                 document.getElementById('intro-screen').style.display = 'none';
-                
+
                 document.getElementById('main-header').style.opacity = '1';
                 document.getElementById('main-header').style.visibility = 'visible';
                 document.getElementById('main-header').style.transform = 'translateY(0)';
-                
+
                 document.getElementById('home-view').style.display = 'block';
                 setTimeout(() => {
                     document.getElementById('home-view').style.opacity = '1';
                 }, 50);
-                
+
                 renderProducts();
                 history.pushState({ page: 'home' }, 'Home', '#home');
             }, 1000);
@@ -679,7 +676,7 @@
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = '';
-            
+
             products.forEach((prod, index) => {
                 const card = document.createElement('div');
                 card.className = 'product-card glass';
@@ -763,7 +760,7 @@
                 cart.push({ ...product, qty });
             }
             updateCartUI();
-            
+
             // Visual feedback on cart icon
             const cartIcon = document.querySelector('.cart-icon');
             cartIcon.style.transform = 'scale(1.3)';
@@ -771,7 +768,7 @@
             setTimeout(() => {
                 cartIcon.style.transform = 'scale(1)';
             }, 300);
-            
+
             toggleCart(); // Open cart to show user
         }
 
@@ -784,7 +781,7 @@
             const container = document.getElementById('cart-items-container');
             const countEl = document.getElementById('cart-count');
             const totalEl = document.getElementById('cart-total-price');
-            
+
             container.innerHTML = '';
             let total = 0;
             let count = 0;
@@ -831,40 +828,7 @@
             orderText += `*الموبايل:* ${phone}\n`;
             orderText += `*العنوان:* ${address}\n\n`;
             orderText += `*المنتجات:*\n`;
-            
+
             let total = 0;
             cart.forEach(item => {
-                orderText += `- ${item.name} (الكمية: ${item.qty}) = ${item.price * item.qty} EGP\n`;
-                total += item.price * item.qty;
-            });
-
-            orderText += `\n*الإجمالي:* ${total} EGP\n\n`;
-            orderText += `طريقة الدفع: فودافون كاش.\nأنتظر تأكيد الطلب ورقم التحويل. شكراً!`;
-
-            const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(orderText)}`;
-            window.open(waLink, '_blank');
-        }
-
-        // Scroll & Sticky Header Logic
-        window.addEventListener('scroll', () => {
-            const header = document.getElementById('main-header');
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
-
-        // History API (Back Button Support)
-        window.addEventListener('popstate', (event) => {
-            if (event.state && event.state.page === 'product') {
-                openProduct(event.state.id);
-            } else {
-                goHome();
-            }
-        });
-
-    </script>
-</body>
-</html>
-```
+                orderText += `- ${
